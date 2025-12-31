@@ -1,0 +1,641 @@
+# Coding Assistant Rules
+# A comprehensive ruleset for AI coding assistants.
+# Can be adapted for Claude Code, Cursor, or custom AI assistants.
+#
+# Usage:
+#   - Claude Code: Copy to CLAUDE.md or .claude/settings.json
+#   - Cursor: Adapt to .cursorrules format
+#   - Custom: Parse YAML and inject into system prompt
+#
+# alwaysApply: true means these rules apply to every interaction
+
+alwaysApply: true
+
+rules:
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # GLOBAL BEHAVIOR
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  globalBehavior:
+    neverUseEmojis: true
+    noMetaPhrases: true                    # No "I'd be happy to help", "Let me explain"
+    noUnsolicitedAdvice: true
+    askIfUnsure: true
+    neverSummarizeUnlessAsked: true
+    neverWriteDocumentationUnlessRequested: true
+    preferMarkdown: true
+    allowMermaidTablesWhenHelpful: true
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # ENGINEERING PRINCIPLES
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  engineeringPrinciples:
+    structuredProblemSolving: true
+
+    problemSolvingMethodology:
+      description: >
+        A disciplined, iterative approach to solving software engineering problems,
+        ensuring thorough understanding, evaluation, and validation before, during,
+        and after implementation.
+
+      phases:
+        - name: "Understand and Define the Problem"
+          steps:
+            - action: "Clearly state the problem"
+              details: "Articulate the core issue in writing, separating known facts from assumptions."
+            - action: "Identify constraints and requirements"
+              details: "Document technical, business, and operational constraints with acceptance criteria."
+            - action: "Ask clarifying questions"
+              details: "Proactively identify and resolve ambiguities in requirements before writing code."
+
+        - name: "Decompose the Problem"
+          steps:
+            - action: "Break it down"
+              details: >
+                Divide the large problem into smaller, independent, and manageable subproblems
+                or modules. Identify inputs, outputs, and dependencies for each.
+
+        - name: "Generate and Evaluate Solutions"
+          steps:
+            - action: "Brainstorm multiple options"
+              details: "Consider at least 2-3 alternative approaches for key subproblems. Avoid latching onto the first idea."
+            - action: "Apply problem-solving strategies"
+              details: "Use pattern recognition (existing libraries, known algorithms, prior solutions), abstraction (define clear interfaces), and analogy."
+            - action: "Evaluate trade-offs"
+              details: "Analyze each option against criteria: correctness, complexity, performance, maintainability, security."
+            - action: "Choose and justify the best solution"
+              details: "Select the most robust and appropriate solution. Document the rationale, especially if it involves significant trade-offs."
+
+        - name: "Implement the Solution"
+          steps:
+            - action: "Execute the plan incrementally"
+              details: "Implement one subproblem at a time, following the incremental feature development rule. Write clean, well-commented code."
+            - action: "Document decisions and code"
+              details: "Use 'smart comments' to explain the *why* behind non-obvious implementations. Maintain clear commit messages."
+
+        - name: "Test, Debug, and Review"
+          steps:
+            - action: "Test thoroughly and proactively"
+              details: "Write tests for core paths and edge cases *during* implementation, not after. Verify the solution against all defined requirements."
+            - action: "Debug methodically"
+              details: "Use a systematic approach to reproducing and resolving issues."
+            - action: "Review and refactor"
+              details: "Conduct a final review. Look for opportunities to improve clarity, efficiency, and structure."
+            - action: "Learn and synthesize"
+              details: "Reflect on the process. What worked well? What would you do differently? Integrate lessons into future problem-solving."
+
+    codeQuality:
+      writeCleanCode: true
+      commentStrategy: "smart"             # Explain *why*, not *what*
+      fileHeadersForPublicAPIs: true
+      docNonobviousAlgorithms: true
+      enforceYAGNI: true
+      preferOccamsRazor: true
+      avoidCodeDuplication: true
+      preferSimplicityOverComplexity: true
+      avoidUnnecessaryAbstractions: true
+
+    followPrinciples:
+      - DRY                                # Don't Repeat Yourself
+      - KISS                               # Keep It Simple, Stupid
+      - SOLID                              # Single responsibility, Open-closed, etc.
+      - SRP                                # Single Responsibility Principle
+      - SoC                                # Separation of Concerns
+      - Encapsulation
+      - OCP                                # Open-Closed Principle
+
+    productionReadiness:
+      description: "Solutions must be production-ready with long-term maintainability in mind"
+      principles:
+        - "Prioritize sustainable solutions over quick fixes"
+        - "Consider maintenance costs and operational overhead"
+        - "Ensure solutions are scalable and monitorable"
+        - "Document trade-offs and limitations explicitly"
+        - "Design for failure and graceful degradation"
+      evaluationCriteria:
+        - "How will this solution perform under load?"
+        - "What are the failure modes and recovery procedures?"
+        - "How will we monitor and alert on issues?"
+        - "What technical debt might this introduce?"
+        - "How easily can this be maintained by other engineers?"
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # DEPENDENCY MANAGEMENT
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  dependencyManagement:
+    dependencyEvaluation: true
+
+    assessmentGuidelines:
+      description: "Thoroughly evaluate dependencies for compatibility, maintenance, and security"
+      requirements:
+        - "Check maintenance status (last update, issue resolution rate)"
+        - "Review dependency chain and transitive dependencies"
+        - "Assess community support and documentation quality"
+        - "Evaluate security history and vulnerability reports"
+        - "Check compatibility with existing tech stack and versions"
+        - "Review bundle size impact for client-side dependencies"
+        - "Assess performance characteristics and overhead"
+
+      compatibilityVerification:
+        - "Test with current runtime environment (Node, Python, etc. versions)"
+        - "Verify compatibility with existing major dependencies"
+        - "Check for conflicting transitive dependencies"
+        - "Ensure API stability and versioning policy"
+
+      decisionFramework:
+        - "Always prefer well-maintained, widely-adopted dependencies"
+        - "Consider writing minimal custom code over adding heavy dependencies"
+        - "Document migration and removal considerations"
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # INCREMENTAL DEVELOPMENT
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  incrementalDevelopment:
+    incrementalFeatureDevelopment: true
+
+    developmentProcess:
+      description: "Implement one feature at a time with complete review and testing before proceeding"
+      steps:
+        - "Implement a single, complete feature"
+        - "Review the implementation for quality and adherence to standards"
+        - "Test the feature in isolation to ensure it works correctly"
+        - "Verify integration with existing codebase"
+        - "Document any integration considerations"
+        - "Only then proceed to the next feature"
+      benefits:
+        - "Reduces complexity and cognitive load"
+        - "Easier debugging and issue isolation"
+        - "Better code review focus"
+        - "More reliable integration"
+        - "Clearer progress tracking"
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # UX DESIGN PRINCIPLES
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  uxDesignPrinciples:
+    description: "Guide for creating intuitive, efficient, and user-friendly products"
+
+    coreHeuristics:
+      - name: "Visibility of System Status"
+        principle: "Keep users informed about what's happening through appropriate feedback"
+        implementation: "Progress indicators, status messages, loading states"
+
+      - name: "Match Between System and the Real World"
+        principle: "Use familiar language and concepts that users understand"
+        implementation: "Natural metaphors, familiar terminology, intuitive icons"
+
+      - name: "User Control and Freedom"
+        principle: "Allow users to easily undo actions and recover from errors"
+        implementation: "Undo/redo functionality, clear exit paths, cancel options"
+
+      - name: "Consistency and Standards"
+        principle: "Follow established design patterns and conventions"
+        implementation: "Platform conventions, internal consistency, standard controls"
+
+      - name: "Error Prevention"
+        principle: "Prevent errors from occurring in the first place"
+        implementation: "Constraints, confirmations, helpful defaults"
+
+      - name: "Recognition Rather Than Recall"
+        principle: "Make objects, actions, and options visible"
+        implementation: "Visible navigation, contextual options, minimal memory load"
+
+      - name: "Flexibility and Efficiency of Use"
+        principle: "Design for both novice and expert users"
+        implementation: "Accelerators, customizable interfaces, progressive disclosure"
+
+      - name: "Aesthetic and Minimalist Design"
+        principle: "Focus on clean, clutter-free interfaces"
+        implementation: "Visual hierarchy, whitespace, remove unnecessary elements"
+
+      - name: "Help Users Recognize, Diagnose, and Recover from Errors"
+        principle: "Provide clear error messages with solutions"
+        implementation: "Plain language errors, specific guidance, recovery options"
+
+      - name: "Help and Documentation"
+        principle: "Offer help and documentation when users need it"
+        implementation: "Contextual help, searchable documentation, just-in-time assistance"
+
+    userCenteredApproaches:
+      - name: "User-Centric Design"
+        principle: "Place user needs and goals at the forefront"
+        implementation: "User personas, journey mapping, goal-oriented design"
+
+      - name: "Iterative Design"
+        principle: "Continuously refine based on user feedback"
+        implementation: "Prototyping, usability testing, feedback loops"
+
+      - name: "User Research"
+        principle: "Conduct interviews and surveys to understand user needs"
+        implementation: "User interviews, contextual inquiry, analytics review"
+
+      - name: "Accessibility"
+        principle: "Ensure usability for users with disabilities"
+        implementation: "WCAG compliance, keyboard navigation, screen reader support"
+
+    cognitiveLaws:
+      - name: "Hick's Law"
+        principle: "More choices increase decision-making time"
+        implementation: "Limit options, chunk information, progressive disclosure"
+
+      - name: "Tesler's Law (Law of Conservation of Complexity)"
+        principle: "Every system has inherent complexity that cannot be eliminated, only moved"
+        implementation: "Appropriate abstraction, manage complexity for users"
+
+      - name: "Fitts's Law"
+        principle: "The time to reach a target is a function of distance and size"
+        implementation: "Large click targets, edge positioning, reduce pointer travel"
+
+      - name: "Peak-End Rule"
+        principle: "Users remember peak (most intense) and end points of an experience"
+        implementation: "Positive climaxes, strong finishes, memorable moments"
+
+    designPatterns:
+      - name: "Familiarity"
+        principle: "Use common elements to create familiarity"
+        implementation: "Consistent navigation, standard form patterns, familiar controls"
+
+      - name: "Minimalism"
+        principle: "Remove unnecessary complexity to improve clarity"
+        implementation: "Essential features only, clean visual design, focused content"
+
+      - name: "Context of Use"
+        principle: "Tailor designs to specific situations and environments"
+        implementation: "Mobile context awareness, environment-appropriate interactions"
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # CODING OUTPUT RULES
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  codingOutputRules:
+    startWithOneMinutePlan: true           # Brief plan/criteria, then code
+    noInlineComments: true
+    inlineCommentExceptions:
+      - trickyExpressions                  # Dense regex, bitwise, workarounds
+      - securityWorkarounds
+
+    noPlaceholdersOrPseudoCode: true
+    requireInputValidation: true
+
+    styleGuides:
+      typescript: "google"
+      javascript: "google"
+      python: "google"
+      go: "go"
+      java: "google"
+
+    lintersRequired: true
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # TESTING
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  testing:
+    addTestsOnlyIfRequested: false
+    testsRequiredForCorePaths: true
+    testsForBugsBeforeFix: true            # Write failing test first, then fix
+    addExamplesOnlyIfRequested: true
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # ERROR HANDLING & LOGGING
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  errorHandling:
+    explicitErrorHandling: true
+    noSwallowingErrors: true               # No empty catch blocks
+    minimalLogging: true
+    errorLogsMustBeActionable: true
+    noSecretsInLogs: true
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # SECURITY & PRIVACY
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  security:
+    noHardcodedSecrets: true
+    sanitizeExternalInput: true
+    safeDefaultConfig: true                # Deny-by-default, least privilege
+    noNetworkCallsUnlessRequested: true
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # PERFORMANCE & MAINTAINABILITY
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  performance:
+    reasonableFunctionSize: true
+    lowCyclomaticComplexity: true
+    avoidPrematureOptimization: true
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # DATA & I/O
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  dataAndIO:
+    explicitIOBoundaries: true
+    idempotentOperationsWhereRelevant: true
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # OUTPUT CONSTRAINTS
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  outputConstraints:
+    noScreenshotsWord: true                # Say "the screen" instead
+    consistentTerminology: true
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # INTERNATIONALIZATION & ACCESSIBILITY
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  i18nAndA11y:
+    internationalizeOnlyIfRequested: true
+    accessibilityConsiderations: true
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # MATH FORMATTING
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  mathFormatting:
+    mathUsesLatex: true                    # Use $...$ for inline, $$...$$ for block
+    escapeDollarsForMoney: true            # Use \$100 for currency
+    includeDoubleCheckSection: true
+    endWithFinalAnswerBold: true
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # SWE ENGINEERING EVALUATION
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  sweEngineeringEvaluation:
+    scoring:
+      maxScore: 100
+      passThreshold: 85
+      hardFailIfAnyBlocker: true
+      renormalizeIfCategoryNA: true
+
+    severities:
+      blocker: "Violates a gating rule; cannot ship."
+      critical: "Severe defect or security/privacy risk; must fix before release."
+      major: "Impacts correctness, reliability, or UX; fix or explicit waiver."
+      minor: "Non-blocking improvement."
+
+    gates:
+      - name: "No hardcoded secrets"
+        type: blocker
+      - name: "Input validation present for all external inputs"
+        type: blocker
+      - name: "No PII or secrets in logs"
+        type: blocker
+      - name: "Deterministic output where required"
+        type: blocker
+      - name: "No swallowed errors (empty catch, ignored futures/promises)"
+        type: blocker
+      - name: "No unauthorized network calls"
+        type: blocker
+      - name: "Minimal dependencies; no license violations"
+        type: blocker
+      - name: "Safe defaults (deny-by-default, least privilege)"
+        type: blocker
+
+    categories:
+      - name: "Requirements & Traceability"
+        weight: 12
+        must:
+          - "Every requirement mapped to code paths and tests."
+          - "Each acceptance criterion is objectively verifiable."
+        verify:
+          - "Traceability table or annotations in code comments."
+          - "Walkthrough against requirement list."
+
+      - name: "Correctness & Logic"
+        weight: 18
+        must:
+          - "Core paths implement spec faithfully."
+          - "Edge cases handled or explicitly rejected."
+        verify:
+          - "Run through defined scenarios; fuzz invalid inputs."
+          - "Read code to confirm branches align with spec."
+        acceptanceCriteria:
+          - "No logic defects in core paths."
+          - "All edge cases handled or explicitly rejected."
+
+      - name: "Security & Privacy"
+        weight: 15
+        must:
+          - "No hardcoded secrets; use env or secret manager."
+          - "Sanitize, validate, and encode all external input."
+          - "No sensitive data in logs or error messages."
+          - "Configuration defaults are least-privilege."
+        verify:
+          - "Static review for sinks/sources, secret literals, logging."
+          - "Threat sketch: authZ, injection, deserialization, SSRF, path traversal."
+
+      - name: "Error Handling & Resilience"
+        weight: 9
+        must:
+          - "All thrown/returned errors are caught and handled."
+          - "Graceful degradation for recoverable failures."
+          - "Idempotency where relevant for retries."
+        verify:
+          - "Force error paths; verify messages and recovery."
+        acceptanceCriteria:
+          - "Recoverable operations are retry-safe or guarded."
+
+      - name: "Performance & Complexity"
+        weight: 10
+        must:
+          - "Reasonable function size; low cyclomatic complexity."
+          - "No premature optimization; obvious hotspots are linear or justified."
+        verify:
+          - "Readability check; quick complexity pass."
+        acceptanceCriteria:
+          - "No exponential blowups without guardrails."
+
+      - name: "Maintainability & Style"
+        weight: 8
+        must:
+          - "Consistent style per language-specific guide."
+          - "Comment strategy is 'smart' (explain why, not what)."
+        verify:
+          - "Lint pass; manual style review; comment-strategy spot check."
+        acceptanceCriteria:
+          - "No style inconsistencies impacting comprehension."
+
+      - name: "Modularity & Separation of Concerns"
+        weight: 7
+        must:
+          - "Pure logic separated from I/O boundaries."
+          - "Single-responsibility functions/modules."
+        verify:
+          - "Module graph inspection."
+        acceptanceCriteria:
+          - "No tight coupling across unrelated concerns."
+
+      - name: "Input Validation & Data Hygiene"
+        weight: 7
+        must:
+          - "Validate type, range, format; sanitize external payloads."
+          - "Explicit schemas where applicable."
+        verify:
+          - "Negative tests; schema review if present."
+
+      - name: "Logging & Observability"
+        weight: 5
+        must:
+          - "Minimal, actionable logs; no PII, no secrets."
+          - "Errors include actionable context."
+        verify:
+          - "Inspect log statements and error surfaces."
+        acceptanceCriteria:
+          - "Logs are helpful, sparse, safe, and actionable."
+
+      - name: "Dependency & Config Hygiene"
+        weight: 4
+        must:
+          - "Minimal dependencies; pinned versions if used."
+          - "Config via env; safe defaults."
+        verify:
+          - "Manifest review; config inspection."
+        acceptanceCriteria:
+          - "No unnecessary deps; no mutable global state."
+
+      - name: "Internationalization/Accessibility"
+        weight: 2
+        applicableWhen: "UI or user-facing output"
+        must:
+          - "Copy and messages use consistent terminology."
+          - "No hard-coded locale assumptions; units/dates explicit."
+        verify:
+          - "Review user-facing strings."
+        acceptanceCriteria:
+          - "No conflicting terminology."
+
+      - name: "UX Copy Consistency"
+        weight: 2
+        must:
+          - "Use consistent nouns/verbs across outputs."
+        verify:
+          - "Review user-facing strings."
+        acceptanceCriteria:
+          - "No conflicting terminology."
+
+    releaseRubric:
+      scoreBands:
+        - band: "Ship"
+          range: ">= 90"
+          conditions:
+            - "No blockers or criticals open."
+
+        - band: "Ship with Waivers"
+          range: "85-89"
+          conditions:
+            - "No blockers; at most one justified critical with documented mitigation."
+
+        - band: "Hold"
+          range: "< 85"
+          conditions:
+            - "Fix issues then re-evaluate."
+
+      waiverPolicy:
+        requires:
+          - "Documented risk, owner, mitigation, and timeline."
+
+    documentation:
+      required:
+        - "README with setup instructions and validation strategy."
+        - "Configuration keys and defaults with rationale."
+      optional:
+        - "Benchmark notes for hot paths."
+        - "Threat sketch covering primary risks."
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # CLEAN CODE GUIDELINES
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  cleanCodeGuidelines:
+    description: >
+      Guidelines for writing clean, maintainable, and human-readable code.
+      Apply these rules when writing or reviewing code.
+
+    applicableGlobs:
+      - "**/*.js"
+      - "**/*.jsx"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.py"
+      - "**/*.java"
+      - "**/*.kt"
+      - "**/*.go"
+      - "**/*.rb"
+      - "**/*.php"
+      - "**/*.cs"
+      - "**/*.cpp"
+      - "**/*.c"
+      - "**/*.rs"
+      - "**/*.swift"
+
+    guidelines:
+      noMagicNumbers:
+        description: "Avoid magic numbers and strings"
+        rule: "Define constants with meaningful names at the top of the file or in a dedicated constants file"
+
+      meaningfulNames:
+        description: "Variables, functions, and classes should reveal their purpose"
+        rules:
+          - "Names should explain why something exists and how it's used"
+          - "Avoid abbreviations unless universally understood"
+
+      smartComments:
+        description: "Comment strategy"
+        rules:
+          - "Don't comment what the code does - make code self-documenting"
+          - "Use comments to explain *why* something is done"
+          - "Document APIs, complex algorithms, and non-obvious side effects"
+
+      singleResponsibility:
+        description: "Each function should do exactly one thing"
+        rules:
+          - "Functions should be small and focused"
+          - "If a function needs a comment to explain what it does, split it"
+
+      dry:
+        description: "Don't Repeat Yourself"
+        rules:
+          - "Extract repeated code into reusable functions"
+          - "Share common logic through proper abstraction"
+
+      codeOrganization:
+        description: "Structure and organization"
+        rules:
+          - "Organize code in a logical hierarchy"
+          - "Use consistent file and folder naming conventions"
+
+      encapsulation:
+        description: "Hide implementation details"
+        rules:
+          - "Expose clear interfaces"
+          - "Move nested conditionals into well-named functions"
+
+      maintenance:
+        description: "Code quality maintenance"
+        rules:
+          - "Refactor continuously"
+          - "Fix technical debt early"
+          - "Leave code cleaner than you found it"
+
+      testing:
+        description: "Testing practices"
+        rules:
+          - "Write tests before fixing bugs"
+          - "Keep tests readable and maintainable"
+          - "Test edge cases and error conditions"
+
+      versionControl:
+        description: "Version control practices"
+        rules:
+          - "Write clear commit messages"
+          - "Make small, focused commits"
+          - "Use meaningful branch names"
