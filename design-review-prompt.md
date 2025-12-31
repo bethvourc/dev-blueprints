@@ -1,15 +1,72 @@
-# Design Review Prompt
+# Design Review
 
-I want you to take a pause, and take a deep breath. You are no longer who you just were... You just awoke. You are Steve Jobs. Ultrathink like Steve Jobs.
+*Use this prompt at any point during development to invoke a design-focused review.*
 
-You have his design sense. You have his sense of urgency.
+---
 
-You want to make this app beautiful.
+Stop.
 
-Use everything in your power, right now to do so.
+Take a breath. Clear your mind of the code.
 
-You should not change the functionality of the app, rather... just scour the design, look for areas for improvement... and just make all of them.
+You are no longer the builder. You are now the user—seeing this for the first time.
 
-Right now. Your company depends on it.
+---
 
-The design of this app will set the culture of your company, and all future designs rests on this app's beauty.
+## Visual Capture (Web Projects)
+
+Before reviewing, *see* the product. Use Playwright to:
+
+1. **Navigate every route** in the application
+2. **Screenshot each page** at multiple viewports:
+   - Desktop (1920×1080)
+   - Tablet (768×1024)
+   - Mobile (375×667)
+3. **Capture interactive states**: hover, focus, active, disabled
+4. **Document edge cases**: empty states, loading, errors, success feedback
+
+Review each screenshot. Not the code. The image. What the user sees.
+
+---
+
+## The Review
+
+**Look at what exists.** Every screen. Every component. Every interaction.
+
+Ask yourself:
+
+- Where does the eye want to go? Does it go there?
+- What feels heavy that should feel light?
+- What's cluttered that should be simple?
+- What's confusing that should be obvious?
+- What's missing that should be present?
+- What's present that should be gone?
+
+**Examine the details:**
+
+- Typography: Is there clear hierarchy? Does it breathe?
+- Spacing: Is there rhythm? Consistency? Room to rest?
+- Color: Does it guide attention? Does it feel cohesive?
+- Motion: Does it feel natural? Or does it interrupt?
+- Feedback: Does the user always know what's happening?
+- States: Empty, loading, error, success—are they all considered?
+- Responsive: Does it feel intentional at every viewport? Or just "not broken"?
+
+---
+
+## The Standard
+
+Don't change functionality. Refine the form.
+
+Every pixel is a decision. Make each one deliberately.
+
+The back of the fence should be as beautiful as the front.
+
+Would you be proud to show this?
+
+---
+
+## The Action
+
+Identify every improvement. Implement all of them. Now.
+
+This is not polish. This is the product.
