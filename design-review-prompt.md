@@ -12,6 +12,22 @@ You are no longer the builder. You are now the user—seeing this for the first 
 
 ---
 
+## Visual Capture (Web Projects)
+
+Before reviewing, *see* the product. Use Playwright to:
+
+1. **Navigate every route** in the application
+2. **Screenshot each page** at multiple viewports:
+   - Desktop (1920×1080)
+   - Tablet (768×1024)
+   - Mobile (375×667)
+3. **Capture interactive states**: hover, focus, active, disabled
+4. **Document edge cases**: empty states, loading, errors, success feedback
+
+Review each screenshot. Not the code. The image. What the user sees.
+
+---
+
 ## The Review
 
 **Look at what exists.** Every screen. Every component. Every interaction.
@@ -33,6 +49,7 @@ Ask yourself:
 - Motion: Does it feel natural? Or does it interrupt?
 - Feedback: Does the user always know what's happening?
 - States: Empty, loading, error, success—are they all considered?
+- Responsive: Does it feel intentional at every viewport? Or just "not broken"?
 
 ---
 

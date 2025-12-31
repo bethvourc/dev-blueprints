@@ -22,6 +22,8 @@ Break down the development process into small, manageable steps that can be exec
 
 5. **Design from the start.** Consider the user's experience in every step. The database schema affects the API. The API affects the UI. The UI affects how someone *feels* when they use your product.
 
+6. **See it constantly.** *(Web projects)* After every step that touches UI, use Playwright to visually verify the result. Don't wait until the end to discover something looks wrong. Catch it immediately. Fix it immediately.
+
 ---
 
 ## Step Format
@@ -41,6 +43,7 @@ Present your plan using this structure. Each step must be self-contained—imple
   - **Dependencies**: [Previous steps this builds upon]
   - **Design Consideration**: [How this affects user experience]
   - **Testing**: [How we verify this works]
+  - **UI Verification**: [Web projects: Playwright routes to visually inspect after this step. Specify pages/components to screenshot and verify. "None" if step doesn't affect UI]
   - **User Instructions**: [Any manual steps required]
 
 [Additional steps...]
@@ -49,10 +52,20 @@ Present your plan using this structure. Each step must be self-contained—imple
 
 The final phase. Non-negotiable.
 
-- [ ] Step N.1: Design audit
-  - **Task**: Review every user-facing element
+- [ ] Step N.1: Visual audit with Playwright (Web projects)
+  - **Task**: Systematically navigate every route, capture every state
+  - **Why**: See the product as users will see it
+  - **Playwright Scope**:
+    - Screenshot every page at desktop, tablet, and mobile viewports
+    - Capture all interactive states: hover, focus, active, disabled
+    - Document empty states, loading states, error states, success states
+    - Verify visual consistency across the entire application
+  - **Review Each Screenshot**: Does this meet the standard?
+
+- [ ] Step N.2: Design refinement
+  - **Task**: Fix every visual issue identified
   - **Why**: Details matter. The back of the fence matters.
-  - **Scope**: Typography, spacing, color, motion, feedback, error states, empty states, loading states
+  - **Scope**: Typography, spacing, color, motion, feedback, alignment, consistency
   - **Standard**: Would you be proud to show this?
 ``````
 
@@ -72,7 +85,9 @@ Cover all aspects of your technical specification:
 
 ## The Design Review
 
-When implementation is complete, invoke this:
+When implementation is complete, invoke this.
+
+**For web projects:** Use Playwright to navigate every route and capture screenshots. See the product as your users will. Review each image with fresh eyes.
 
 ---
 
