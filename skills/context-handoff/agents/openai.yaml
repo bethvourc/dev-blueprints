@@ -1,6 +1,6 @@
 interface:
   display_name: "Context Handoff"
   short_description: "Create complete agent transfer reports"
-  default_prompt: "Use $context-handoff to create a report.md that transfers full implementation context to another agent."
+  default_prompt: "Use $context-handoff to create a model-agnostic report.md that transfers full implementation context to any next agent."
 policy:
   allow_implicit_invocation: true

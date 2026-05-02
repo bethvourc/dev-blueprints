@@ -4,6 +4,11 @@
 **Project root**: `[absolute path]`
 **Git branch**: `[branch]`
 **HEAD**: `[commit]`
+**Handoff reason**: [automatic-threshold / manual-switch / compaction-warning / session-ending / other]
+**Configured threshold**: [80]%
+**Observed usage**: [reported usage signal or unavailable]
+**Source agent/model**: [current agent/model if known]
+**Intended next agent/model**: [any capable agent/model or specific target if known]
 
 ## Next-Agent Start Prompt
 
@@ -67,6 +72,11 @@ Read this `report.md` first, then inspect the current git status and diffs befor
 ## Known Risks And Constraints
 
 - [Risks, fragile assumptions, unrelated dirty files, environment constraints, skipped checks, and safety notes.]
+
+## Workflow Integration Notes
+
+- This report is intended as a developer workflow handoff artifact, not a commit artifact, unless the user explicitly asks to keep or commit it.
+- The next agent should treat this report as context, then verify the live workspace state before editing.
 
 ## Resume Checklist
 

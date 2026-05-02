@@ -125,7 +125,17 @@ def code_block(value: str) -> str:
     return f"```text\n{normalized if normalized.strip() else '(none)'}\n```"
 
 
-def build_report(project_root: Path, output_path: Path, current_goal: str, notes: list[str]) -> str:
+def build_report(
+    project_root: Path,
+    output_path: Path,
+    current_goal: str,
+    notes: list[str],
+    handoff_reason: str,
+    trigger_threshold: str,
+    observed_usage: str,
+    source_agent: str,
+    next_agent: str,
+) -> str:
     root = git_root(project_root)
     is_git = root is not None
     root = root or project_root.resolve()
@@ -134,6 +144,7 @@ def build_report(project_root: Path, output_path: Path, current_goal: str, notes
     branch = git_value(["branch", "--show-current"], root) if is_git else "not a git worktree"
     head = git_value(["rev-parse", "--short", "HEAD"], root) if is_git else "not a git worktree"
     status = git_output(["status", "--short"], root) if is_git else "(git unavailable)"
+    last_commits = git_output(["log", "--oneline", "-n", "5"], root) if is_git else "(git unavailable)"
     rows = parse_status(status if is_git else "", output_path, root)
 
     note_block = "\n".join(f"- {note}" for note in notes) if notes else "- Fill in any session notes that are not obvious from the diff."
@@ -146,6 +157,11 @@ def build_report(project_root: Path, output_path: Path, current_goal: str, notes
             f"**Project root**: `{root}`",
             f"**Git branch**: `{branch}`",
             f"**HEAD**: `{head}`",
+            f"**Handoff reason**: {handoff_reason or 'Fill in automatic-threshold, manual-switch, compaction-warning, session-ending, or other trigger.'}",
+            f"**Configured threshold**: {trigger_threshold or '80'}%",
+            f"**Observed usage**: {observed_usage or 'Fill in reported context/session/token/rate-limit usage, or state that it was unavailable.'}",
+            f"**Source agent/model**: {source_agent or 'Fill in current agent/model if known.'}",
+            f"**Intended next agent/model**: {next_agent or 'Any capable agent or model.'}",
             "",
             "> This report is a handoff artifact. It is complete only after the active agent fills the narrative sections from conversation context, file review, and verification results.",
             "",
@@ -189,6 +205,10 @@ def build_report(project_root: Path, output_path: Path, current_goal: str, notes
             "",
             code_block(git_output(["diff", "--cached", "--name-status"], root) if is_git else "(git unavailable)"),
             "",
+            "### Last 5 Commits",
+            "",
+            code_block(last_commits),
+            "",
             "## Files Changed",
             "",
             make_table(rows),
@@ -228,6 +248,11 @@ def build_report(project_root: Path, output_path: Path, current_goal: str, notes
             "",
             "- Fill in risks, fragile assumptions, unrelated dirty files, environment constraints, skipped checks, and safety notes.",
             "",
+            "## Workflow Integration Notes",
+            "",
+            "- This report is intended as a developer workflow handoff artifact, not a commit artifact, unless the user explicitly asks to keep or commit it.",
+            "- The next agent should treat this report as context, then verify the live workspace state before editing.",
+            "",
             "## Resume Checklist",
             "",
             "- [ ] Read this report fully.",
@@ -245,6 +270,11 @@ def main() -> int:
     parser.add_argument("--project-root", default=".", help="Project root or any path inside the target git worktree.")
     parser.add_argument("--output", default="report.md", help="Output markdown path. Relative paths resolve from the project root.")
     parser.add_argument("--current-goal", default="", help="Optional latest user goal to prefill in the report.")
+    parser.add_argument("--handoff-reason", default="", help="Trigger reason, such as automatic-threshold, manual-switch, or compaction-warning.")
+    parser.add_argument("--trigger-threshold", default="80", help="Configured handoff threshold percentage.")
+    parser.add_argument("--observed-usage", default="", help="Observed usage signal, such as '82% context' or 'compaction warning'.")
+    parser.add_argument("--source-agent", default="", help="Current agent or model, if known.")
+    parser.add_argument("--next-agent", default="", help="Intended next agent or model. Use a generic value for model-agnostic handoff.")
     parser.add_argument("--note", action="append", default=[], help="Optional session note. Can be repeated.")
     args = parser.parse_args()
 
@@ -255,7 +285,17 @@ def main() -> int:
         output_path = detected_root / output_path
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    report = build_report(detected_root, output_path, args.current_goal.strip(), args.note)
+    report = build_report(
+        detected_root,
+        output_path,
+        args.current_goal.strip(),
+        args.note,
+        args.handoff_reason.strip(),
+        args.trigger_threshold.strip(),
+        args.observed_usage.strip(),
+        args.source_agent.strip(),
+        args.next_agent.strip(),
+    )
     output_path.write_text(report, encoding="utf-8")
     print(f"Wrote {output_path}")
     print("Review and complete all narrative sections before handing off.")

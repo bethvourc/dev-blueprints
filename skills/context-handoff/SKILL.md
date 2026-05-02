@@ -1,15 +1,63 @@
 ---
 name: context-handoff
-description: Create a thorough `report.md` handoff summary for transferring work between agents or sessions. Use when an agent is near a context/session/rate limit threshold such as 80%, before compaction or shutdown, when the user asks to switch agents such as Codex to Claude, when resuming work needs full context reconstruction, or whenever the user asks for a context transfer, handoff report, session summary, implementation summary, affected-files report, or remaining-work report.
+description: Create a thorough `report.md` handoff summary for transferring work between any agents, models, tools, or sessions. Automatically use when the host/runtime reports that context, session, token, or rate-limit usage has reached the configured handoff threshold, defaulting to 80%; also use before compaction or shutdown, when switching between any model or agent, when resuming work needs full context reconstruction, or whenever the user asks for a context transfer, handoff report, session summary, implementation summary, affected-files report, or remaining-work report.
 ---
 
 # Context Handoff
 
 ## Overview
 
-Create a complete `report.md` that lets another agent reconstruct the current task, file state, implementation reasoning, verification status, and remaining work without relying on hidden conversation context.
+Create a complete `report.md` that lets any next agent or model reconstruct the current task, file state, implementation reasoning, verification status, and remaining work without relying on hidden conversation context.
 
-This skill can be invoked manually by the user or proactively by an agent. If the host runtime exposes an automatic threshold trigger, configure it to invoke this skill around 80% context/session usage; otherwise, invoke it as soon as context pressure, rate-limit pressure, model switching, or handoff risk becomes visible.
+The intended behavior is automatic invocation at the configured handoff threshold. Default to 80% usage when the user or host has not supplied a different threshold.
+
+## Automatic Trigger Requirement
+
+Treat this skill as mandatory once the host/runtime reports any of these conditions:
+
+- Context window, token budget, session limit, rate-limit budget, or compaction budget is at or above the configured handoff threshold.
+- The default threshold is 80%.
+- The host reports a "near limit", "compaction soon", "session ending", or equivalent warning without a precise percentage.
+- The user asks to switch from one agent, model, coding assistant, chat assistant, IDE agent, or CLI agent to another.
+
+When the threshold condition is met, invoke this skill immediately before starting more implementation work. The only acceptable work before the report is a small stabilizing action needed to leave the workspace coherent.
+
+Important host limitation: the skill cannot measure hidden context, token, session, or rate-limit percentages by itself. The agent host or orchestration layer must expose the threshold event and load this skill automatically. If the host cannot expose that telemetry, use the nearest visible signal: compaction warning, session warning, tool/runtime warning, user request, or agent judgment that the conversation is at risk of losing context.
+
+## Workflow Integration Contract
+
+For seamless developer workflow integration, configure the agent host, IDE extension, CLI wrapper, or orchestration layer to follow this contract:
+
+1. Monitor the best available usage signal: context percent, token budget percent, session budget percent, rate-limit budget percent, or compaction warning.
+2. Set `CONTEXT_HANDOFF_THRESHOLD` to the desired percentage. Use `80` when unset.
+3. When usage is at or above the threshold, stop normal implementation routing and invoke this skill.
+4. Pass the trigger metadata into the report generator when available:
+
+```bash
+python3 /path/to/context-handoff/scripts/create_handoff_report.py \
+  --project-root . \
+  --output report.md \
+  --handoff-reason automatic-threshold \
+  --trigger-threshold 80 \
+  --observed-usage "82% context" \
+  --source-agent "current agent/model" \
+  --next-agent "model-agnostic"
+```
+
+5. Require the active agent to complete the narrative sections before switching models.
+6. Run `scripts/validate_handoff_report.py report.md`. If validation fails, fix the report before handoff.
+7. Give the next agent the start prompt from `report.md`.
+
+Do not treat `report.md` as a commit artifact by default. It is a workflow artifact unless the user explicitly wants to keep or commit it.
+
+## Transfer Scope
+
+Make the handoff model-agnostic. Never assume the next worker is a specific product or model family. Write the report so it works for transfers between:
+
+- any OpenAI model or Codex session
+- Claude, Gemini, local models, IDE agents, CLI agents, or other assistants
+- the same agent in a later session
+- a human engineer reading the report directly
 
 ## Required Workflow
 
@@ -38,7 +86,7 @@ If the project is not a git worktree, inspect the relevant directory tree manual
 Prefer the bundled script when Python 3 is available:
 
 ```bash
-python3 /path/to/context-handoff/scripts/create_handoff_report.py --project-root . --output report.md
+python3 /path/to/context-handoff/scripts/create_handoff_report.py --project-root . --output report.md --trigger-threshold 80
 ```
 
 The script creates a structured draft from git metadata. Treat the draft as incomplete until the active agent fills the narrative sections from conversation context and direct file review.
@@ -77,6 +125,14 @@ Before finalizing, read `report.md` once as if you were the next agent. Fix gaps
 
 Do not leave unresolved placeholders such as `TODO`, `unknown`, or `fill in` unless the information is genuinely unavailable. When information is unavailable, explain exactly why and what the next agent should inspect.
 
+Run the validator when Python 3 is available:
+
+```bash
+python3 /path/to/context-handoff/scripts/validate_handoff_report.py report.md
+```
+
+If validation fails, treat the output as a checklist of missing handoff context and update `report.md` before continuing.
+
 ### 6. Final User Message
 
 After writing the report, tell the user:
@@ -98,4 +154,5 @@ Do not include secrets, API keys, private tokens, or credentials in `report.md`.
 ## Bundled Resources
 
 - `scripts/create_handoff_report.py`: generate a `report.md` draft from git status and diff metadata.
+- `scripts/validate_handoff_report.py`: detect missing required sections and unresolved placeholders before handoff.
 - `assets/report-template.md`: manual template for environments where the script is unavailable.
