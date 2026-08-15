@@ -1,4 +1,4 @@
-# Agent Dev Blueprint
+# Agentic Dev Blueprint
 
 Reusable prompts, skills, and loops for agentic development.
 
