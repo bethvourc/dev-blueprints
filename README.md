@@ -11,7 +11,7 @@ Reusable prompts, skills, and loops for agentic development.
   - `design/` — design review prompt and taste standard
   - `system/` — system-prompt authoring guides
 - `skills/` — packaged project knowledge agents load instead of guessing
-  - `hermes-quality-gate/`, `security-skill/`, `context-handoff/`
+  - `hermes-quality-gate/`, `security-skill/`, `context-handoff/`, `disk-cleanup/`
 - `loops/` — the wiring layer: closed loops that drive the prompts and skills autonomously
   - Start with [`loops/README.md`](loops/README.md) for the architecture
   - `bootstrap-loop.md` (new project → production-ready system), `feature-loop.md`,
